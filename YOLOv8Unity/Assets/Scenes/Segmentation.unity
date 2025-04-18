@@ -285,6 +285,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1464134749}
   - {fileID: 1780323366}
   - {fileID: 968955224}
   m_Father: {fileID: 0}
@@ -328,7 +329,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420.47, y: 178.17}
+  m_AnchoredPosition: {x: -761, y: 414}
   m_SizeDelta: {x: 312.34, y: 204.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &968955225
@@ -385,6 +386,7 @@ GameObject:
   - component: {fileID: 1438580888}
   - component: {fileID: 1438580887}
   - component: {fileID: 1438580890}
+  - component: {fileID: 1438580891}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -478,9 +480,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb04ba54041edd24dae5d6eee63287b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ModelFile: {fileID: 5022602860645237092, guid: e02749757fc78a741bf84692a615c8d7, type: 3}
+  ModelFile: {fileID: 5022602860645237092, guid: 067a47137293839408f5ec4c0cf7d228, type: 3}
   ImageUI: {fileID: 1780323367}
   MinBoxConfidence: 0.3
+  UseTransparentBackground: 1
   textureProviderType: 0
   textureProvider:
     rid: 123652600781340672
@@ -491,6 +494,103 @@ MonoBehaviour:
       type: {class: WebCamTextureProvider, ns: Assets.Scripts.TextureProviders, asm: Scripts}
       data:
         cameraName: 
+--- !u!114 &1438580891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438580885}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91245762fc1d20249ad8a84c7280d819, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraImage: {fileID: 1464134750}
+  textureProviderType: 0
+  textureProvider:
+    rid: 123652602682933268
+  textureWidth: 640
+  textureHeight: 480
+  references:
+    version: 2
+    RefIds:
+    - rid: 123652602682933268
+      type: {class: WebCamTextureProvider, ns: Assets.Scripts.TextureProviders, asm: Scripts}
+      data:
+        cameraName: 
+--- !u!1 &1464134748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1464134749}
+  - component: {fileID: 1464134751}
+  - component: {fileID: 1464134750}
+  m_Layer: 5
+  m_Name: CameraImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1464134749
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464134748}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 98631264}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1464134750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464134748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &1464134751
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464134748}
+  m_CullTransparentMesh: 0
 --- !u!1 &1780323365
 GameObject:
   m_ObjectHideFlags: 0

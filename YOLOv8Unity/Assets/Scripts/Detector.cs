@@ -5,11 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Unity.Barracuda;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class Detector : MonoBehaviour
@@ -26,6 +23,10 @@ public class Detector : MonoBehaviour
     [Tooltip("The minimum value of box confidence below which boxes won't be drawn.")]
     [SerializeField]
     protected float MinBoxConfidence = 0.3f;
+
+    [Tooltip("Si es verdadero, solo muestra la silueta y el recuadro con fondo transparente.")]
+    [SerializeField]
+    protected bool UseTransparentBackground = false;
 
     [SerializeField]
     protected TextureProviderType.ProviderType textureProviderType;
@@ -55,13 +56,6 @@ public class Detector : MonoBehaviour
         var boxes = yolo.Run(texture);
         DrawResults(boxes, texture);
         ImageUI.texture = texture;
-
-      
-
-        
-
-        
-    
         
     }
     protected TextureProvider GetTextureProvider(Model model)

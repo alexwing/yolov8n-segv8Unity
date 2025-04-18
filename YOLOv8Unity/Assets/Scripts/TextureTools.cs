@@ -110,6 +110,57 @@ class TextureTools
         imgWithMasks.tensorOnDevice.Dispose();
     }
 
+    public static void RenderMaskOnTransparentTexture(Tensor mask, Texture2D targetTexture, Texture2D sourceTexture, Color maskColor, float threshold = 0.5f)
+    {
+        // Get mask dimensions
+        int width = mask.width;
+        int height = mask.height;
+        
+        // Get mask data
+        float[] maskData = mask.AsFloats();
+        
+        // Get pixels from the target texture (which should be transparent)
+        Color[] pixels = targetTexture.GetPixels();
+        
+        // Calculate scale factors if source/target dimensions are different from mask
+        float scaleX = (float)targetTexture.width / width;
+        float scaleY = (float)targetTexture.height / height;
+        
+        // Apply mask to the target texture
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int maskIndex = y * width + x;
+                
+                // Check if this pixel is part of the mask
+                if (maskData[maskIndex] >= threshold)
+                {
+                    // Calculate the corresponding pixel in the target texture
+                    int targetX = Mathf.FloorToInt(x * scaleX);
+                    // Invertimos el eje Y para corregir la orientación vertical de la máscara
+                    int targetY = targetTexture.height - 1 - Mathf.FloorToInt(y * scaleY);
+                    
+                    // Ensure we're within bounds
+                    if (targetX >= 0 && targetX < targetTexture.width && 
+                        targetY >= 0 && targetY < targetTexture.height)
+                    {
+                        int targetIndex = targetY * targetTexture.width + targetX;
+                        
+                        // En lugar de copiar el color de la textura original, usamos el color de la caja
+                        // con una transparencia basada en el valor de la máscara (para efecto semitransparente)
+                        float alpha = Mathf.Lerp(0.3f, 0.7f, maskData[maskIndex]);
+                        Color pixelColor = new Color(maskColor.r, maskColor.g, maskColor.b, alpha);
+                        pixels[targetIndex] = pixelColor;
+                    }
+                }
+            }
+        }
+        
+        // Apply the modified pixels to the target texture
+        targetTexture.SetPixels(pixels);
+    }
+
     private static void RenderTensorToTexture(Tensor tensor, Texture2D texture)
     {
         RenderTexture renderTexture = tensor.ToRenderTexture();

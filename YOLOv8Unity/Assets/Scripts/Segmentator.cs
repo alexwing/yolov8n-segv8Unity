@@ -1,7 +1,6 @@
 ﻿using NN;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace Assets.Scripts
 {
@@ -28,11 +27,19 @@ namespace Assets.Scripts
             YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
             Texture2D texture = GetNextTexture();
 
-            // Debug.Log("Texture resolution: " + texture.width + "x" + texture.height);
-            // Debug.Log("Yolo model resolution: " + nn.model.inputs[0].shape[5] + "x" + nn.model.inputs[0].shape[6]);
-
             var boxes = yolo.Run(texture);
-            DrawResults(boxes, texture);
+            
+            if (UseTransparentBackground)
+            {
+                // Crear una textura transparente con solo la silueta y el recuadro
+                texture = CreateTransparentMaskTexture(boxes, texture);
+            }
+            else
+            {
+                // Modo normal, dibujar sobre la textura original
+                DrawResults(boxes, texture);
+            }
+            
             ImageUI.texture = texture;
 
             if (!scaleInitialized)
@@ -50,6 +57,43 @@ namespace Assets.Scripts
                 Debug.Log($"ImageUI position: {rt.anchoredPosition}, scale: {scale}");
                 scaleInitialized = true;
             }
+        }
+
+        private Texture2D CreateTransparentMaskTexture(List<ResultBoxWithMask> results, Texture2D sourceTexture)
+        {
+            int w = sourceTexture.width;
+            int h = sourceTexture.height;
+            
+            // Crear una nueva textura con formato RGBA32 para permitir transparencia
+            Texture2D transparentTexture = new Texture2D(w, h, TextureFormat.RGBA32, false);
+            Color[] pixels = new Color[w * h];
+            
+            // Inicializar todos los píxeles como transparentes
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                pixels[i] = Color.clear;
+            }
+            
+            // Aplicar los píxeles iniciales
+            transparentTexture.SetPixels(pixels);
+            
+            // Dibujar las siluetas y los recuadros en la textura transparente
+            foreach (ResultBoxWithMask box in results)
+            {
+                // Dibujar la silueta
+                Color boxColor = colorArray[box.bestClassIndex % colorArray.Length];
+                TextureTools.RenderMaskOnTransparentTexture(box.masks, transparentTexture, sourceTexture, boxColor);
+                
+                // Dibujar el recuadro
+                int boxWidth = (int)(box.score / MinBoxConfidence);
+                TextureTools.DrawRectOutline(transparentTexture, box.rect, boxColor, boxWidth, rectIsNormalized: false, revertY: true);
+                
+                // Liberar el tensor de la máscara
+                box.masks.tensorOnDevice.Dispose();
+            }
+            
+            transparentTexture.Apply();
+            return transparentTexture;
         }
 
         void OnDisable()
