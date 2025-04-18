@@ -55,8 +55,15 @@ public class Detector : MonoBehaviour
         var boxes = yolo.Run(texture);
         DrawResults(boxes, texture);
         ImageUI.texture = texture;
-    }
 
+      
+
+        
+
+        
+    
+        
+    }
     protected TextureProvider GetTextureProvider(Model model)
     {
         var firstInput = model.inputs[0];

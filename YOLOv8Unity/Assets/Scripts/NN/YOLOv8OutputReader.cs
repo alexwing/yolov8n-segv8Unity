@@ -12,6 +12,11 @@ namespace NN
         public static int InputWidth = 320;
         public static int InputHeight = 320;
 
+        // cache dimensions after first tensor read
+        private int boxesCount;
+        private int featureCount;
+        private bool dimsInitialized = false;
+
         public IEnumerable<ResultBox> ReadOutput(Tensor output)
         {
             float[,] array = ReadOutputToArray(output);
@@ -22,8 +27,13 @@ namespace NN
         // Ya no usamos un valor fijo de boxes, calculamos en tiempo de ejecución
         private float[,] ReadOutputToArray(Tensor output)
         {
-            int boxesCount = output.shape.height * output.shape.width;
-            int featureCount = output.shape.channels;
+            // initialize and cache grid size and feature count once
+            if (!dimsInitialized)
+            {
+                boxesCount = output.shape.height * output.shape.width;
+                featureCount = output.shape.channels;
+                dimsInitialized = true;
+            }
             var reshapedOutput = output.Reshape(new[] { 1, 1, boxesCount, featureCount });
             var array = TensorToArray2D(reshapedOutput);
             reshapedOutput.Dispose();

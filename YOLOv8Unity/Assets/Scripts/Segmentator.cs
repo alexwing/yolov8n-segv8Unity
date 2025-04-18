@@ -8,6 +8,7 @@ namespace Assets.Scripts
     public class Segmentator : Detector
     {
         YOLOv8Segmentation yolo;
+        private bool scaleInitialized = false;
 
         // Use this for initialization
         void OnEnable()
@@ -27,17 +28,33 @@ namespace Assets.Scripts
             YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
             Texture2D texture = GetNextTexture();
 
-            Debug.Log("Texture resolution: " + texture.width + "x" + texture.height);
-            Debug.Log("Yolo model resolution: " + nn.model.inputs[0].shape[5] + "x" + nn.model.inputs[0].shape[6]);
+            // Debug.Log("Texture resolution: " + texture.width + "x" + texture.height);
+            // Debug.Log("Yolo model resolution: " + nn.model.inputs[0].shape[5] + "x" + nn.model.inputs[0].shape[6]);
 
             var boxes = yolo.Run(texture);
             DrawResults(boxes, texture);
             ImageUI.texture = texture;
+
+            if (!scaleInitialized)
+            {
+                RectTransform rt = ImageUI.GetComponent<RectTransform>();
+                float screenWidth = Screen.width;
+                float screenHeight = Screen.height;
+                float imageWidth = rt.rect.width;
+                float imageHeight = rt.rect.height;
+                float scaleX = screenWidth / imageWidth;
+                float scaleY = screenHeight / imageHeight;
+                float scale = Mathf.Min(scaleX, scaleY);
+                rt.localScale = new Vector3(scale, scale, 1f);
+
+                Debug.Log($"ImageUI position: {rt.anchoredPosition}, scale: {scale}");
+                scaleInitialized = true;
+            }
         }
 
         void OnDisable()
         {
-            nn.Dispose(); 
+            nn.Dispose();
             textureProvider.Stop();
         }
 
