@@ -1,6 +1,7 @@
 ﻿using NN;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -16,6 +17,8 @@ namespace Assets.Scripts
 
             textureProvider = GetTextureProvider(nn.model);
             textureProvider.Start();
+            // Redimensionar RawImage al tamaño del modelo
+            ImageUI.rectTransform.sizeDelta = new Vector2(YOLOv8OutputReader.InputWidth, YOLOv8OutputReader.InputHeight);
         }
 
         // Update is called once per frame
