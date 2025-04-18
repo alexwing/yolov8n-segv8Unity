@@ -77,6 +77,9 @@ public class Detector : MonoBehaviour
                 throw new InvalidEnumArgumentException();
         }
         Debug.Log($"Texture resized to {width}x{height}");
+        // Set YOLOv8 input dimensions dynamically
+        YOLOv8OutputReader.InputWidth = width;
+        YOLOv8OutputReader.InputHeight = height;
         return provider;
     }
 

@@ -11,9 +11,8 @@ namespace NN
     {
         public static float DiscardThreshold = 0.1f;
         protected const int ClassesNum = 80;
-        const int BoxesPerCell = 8400;
-        const int InputWidth = 640;
-        const int InputHeight = 640;
+        public static int InputWidth = 320;
+        public static int InputHeight = 320;
 
         public IEnumerable<ResultBox> ReadOutput(Tensor output)
         {
@@ -22,10 +21,12 @@ namespace NN
                 yield return result;
         }
 
-
+        // Ya no usamos un valor fijo de boxes, calculamos en tiempo de ejecución
         private float[,] ReadOutputToArray(Tensor output)
         {
-            var reshapedOutput = output.Reshape(new[] { 1, 1, BoxesPerCell, -1 });
+            int boxesCount = output.shape.height * output.shape.width;
+            int featureCount = output.shape.channels;
+            var reshapedOutput = output.Reshape(new[] { 1, 1, boxesCount, featureCount });
             var array = TensorToArray2D(reshapedOutput);
             reshapedOutput.Dispose();
             return array;
