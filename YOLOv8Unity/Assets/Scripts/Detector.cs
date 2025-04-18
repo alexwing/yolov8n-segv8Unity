@@ -76,6 +76,7 @@ public class Detector : MonoBehaviour
             default:
                 throw new InvalidEnumArgumentException();
         }
+        Debug.Log($"Texture resized to {width}x{height}");
         return provider;
     }
 

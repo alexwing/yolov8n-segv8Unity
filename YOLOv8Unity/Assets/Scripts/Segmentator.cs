@@ -24,6 +24,9 @@ namespace Assets.Scripts
             YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
             Texture2D texture = GetNextTexture();
 
+            Debug.Log("Texture resolution: " + texture.width + "x" + texture.height);
+            Debug.Log("Yolo model resolution: " + nn.model.inputs[0].shape[5] + "x" + nn.model.inputs[0].shape[6]);
+
             var boxes = yolo.Run(texture);
             DrawResults(boxes, texture);
             ImageUI.texture = texture;
