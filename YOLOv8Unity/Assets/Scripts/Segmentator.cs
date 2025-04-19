@@ -128,6 +128,14 @@ namespace Assets.Scripts
                     TextureTools.DrawRectOutline(transparentTexture, box.rect, boxColor, boxWidth, rectIsNormalized: false, revertY: true);
                 }
                 // No es necesario llamar a Dispose manualmente al usar using
+
+                // Obtener el nombre de la clase detectada
+                string className = box.bestClassIndex < classNames.Length ? 
+                    classNames[box.bestClassIndex] : 
+                    $"Clase {box.bestClassIndex}";
+                
+                // Debug object type con el nombre de la clase
+                Debug.Log($"Objeto detectado: {className}, Score: {box.score:F2}, Rect: {box.rect}");
             }
             
             transparentTexture.Apply();
@@ -155,6 +163,6 @@ namespace Assets.Scripts
             Color boxColor = colorArray[box.bestClassIndex % colorArray.Length];
             TextureTools.RenderMaskOnTexture(boxWithMask.masks, img, boxColor);
             boxWithMask.masks.tensorOnDevice.Dispose();
-        }
+        } 
     }
 }
