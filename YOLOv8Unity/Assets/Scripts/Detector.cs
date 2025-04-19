@@ -19,6 +19,12 @@ public class Detector : MonoBehaviour
     [SerializeField]
     protected RawImage ImageUI;
 
+
+    [Tooltip("RawImage component to render camera texture.")]
+    [SerializeField]
+    protected RawImage CameraImageUI;
+    
+
     [Range(0.0f, 1f)]
     [Tooltip("The minimum value of box confidence below which boxes won't be drawn.")]
     [SerializeField]
@@ -50,14 +56,21 @@ public class Detector : MonoBehaviour
 
     private void Update()
     {
+        // Mostrar la cámara en CameraImageUI a máxima velocidad, independiente del procesamiento YOLO
+        if (CameraImageUI != null)
+        {
+            CameraImageUI.texture = textureProvider.GetRawTexture();
+        }
+
+        // Procesamiento YOLO y visualización de resultados
         YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
         Texture2D texture = GetNextTexture();
 
         var boxes = yolo.Run(texture);
         DrawResults(boxes, texture);
         ImageUI.texture = texture;
-        
     }
+
     protected TextureProvider GetTextureProvider(Model model)
     {
         var firstInput = model.inputs[0];

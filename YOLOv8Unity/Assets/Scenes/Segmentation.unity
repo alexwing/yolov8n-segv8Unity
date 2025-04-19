@@ -386,7 +386,6 @@ GameObject:
   - component: {fileID: 1438580888}
   - component: {fileID: 1438580887}
   - component: {fileID: 1438580890}
-  - component: {fileID: 1438580891}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -482,6 +481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModelFile: {fileID: 5022602860645237092, guid: 067a47137293839408f5ec4c0cf7d228, type: 3}
   ImageUI: {fileID: 1780323367}
+  CameraImageUI: {fileID: 1464134750}
   MinBoxConfidence: 0.3
   UseTransparentBackground: 1
   textureProviderType: 0
@@ -493,32 +493,11 @@ MonoBehaviour:
     - rid: 123652600781340672
       type: {class: WebCamTextureProvider, ns: Assets.Scripts.TextureProviders, asm: Scripts}
       data:
+        size: {x: 0, y: 0}
+        outputTexture: {fileID: 0}
         cameraName: 
---- !u!114 &1438580891
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438580885}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91245762fc1d20249ad8a84c7280d819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraImage: {fileID: 1464134750}
-  textureProviderType: 0
-  textureProvider:
-    rid: 123652602682933268
-  textureWidth: 640
-  textureHeight: 480
-  references:
-    version: 2
-    RefIds:
-    - rid: 123652602682933268
-      type: {class: WebCamTextureProvider, ns: Assets.Scripts.TextureProviders, asm: Scripts}
-      data:
-        cameraName: 
+        DeviceName: 
+        TargetFPS: 0
 --- !u!1 &1464134748
 GameObject:
   m_ObjectHideFlags: 0

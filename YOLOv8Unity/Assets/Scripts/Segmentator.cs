@@ -24,6 +24,12 @@ namespace Assets.Scripts
         // Update is called once per frame
         void Update()
         {
+            // Mostrar la cámara en CameraImageUI a máxima velocidad
+            if (CameraImageUI != null)
+            {
+                CameraImageUI.texture = textureProvider.GetRawTexture();
+            }
+
             YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
             Texture2D texture = GetNextTexture();
 

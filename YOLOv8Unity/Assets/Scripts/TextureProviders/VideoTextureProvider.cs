@@ -10,9 +10,12 @@ namespace Assets.Scripts.TextureProviders
     {
         [SerializeField]
         private VideoClip videoClip;
+
         [SerializeField]
-        private bool loopClip = true;
-        private VideoPlayer player;
+        internal VideoClip Clip = null;
+
+        private VideoPlayer videoPlayer;
+        private RenderTexture videoRenderTexture;
 
         public VideoTextureProvider(int width, int height, TextureFormat format = TextureFormat.RGB24) : base(width, height, format)
         {
@@ -20,24 +23,49 @@ namespace Assets.Scripts.TextureProviders
 
         public VideoTextureProvider(VideoTextureProvider provider, int width, int height, TextureFormat format = TextureFormat.RGB24) : this(width, height, format)
         {
-            if (provider == null)
-                return;
-
-            videoClip = provider.videoClip;
-            loopClip = provider.loopClip;
+            if (provider != null)
+                this.Clip = provider.Clip;
         }
 
         public override void Start()
         {
-            player = new GameObject("Video Player").AddComponent<VideoPlayer>();
-            player.renderMode = VideoRenderMode.APIOnly;
-            player.audioOutputMode = VideoAudioOutputMode.None;
-            player.clip = videoClip;
+            if (Clip == null)
+                throw new NullReferenceException("Video clip isn't set");
+
+            videoPlayer = new GameObject("VideoPlayer").AddComponent<VideoPlayer>();
+            videoPlayer.playOnAwake = false;
+            videoPlayer.clip = Clip;
+            videoPlayer.isLooping = true;
+
+            videoRenderTexture = new RenderTexture(1920, 1080, 0);
+            videoPlayer.renderMode = VideoRenderMode.RenderTexture;
+            videoPlayer.targetTexture = videoRenderTexture;
+
+            videoPlayer.Play();
+            InputTexture = videoRenderTexture;
+        }
+
+        public override Texture GetRawTexture()
+        {
+            // Devolver la textura sin procesar del video
+            return videoRenderTexture;
         }
 
         public override void Stop()
         {
-            GameObject.Destroy(player.gameObject);
+            if (videoPlayer != null)
+            {
+                videoPlayer.Stop();
+                GameObject.Destroy(videoPlayer.gameObject);
+                videoPlayer = null;
+            }
+
+            if (videoRenderTexture != null)
+            {
+                videoRenderTexture.Release();
+                GameObject.Destroy(videoRenderTexture);
+                videoRenderTexture = null;
+            }
         }
 
         public override TextureProviderType.ProviderType TypeEnum()
@@ -47,12 +75,12 @@ namespace Assets.Scripts.TextureProviders
 
         public override Texture2D GetTexture()
         {
-            bool reachedEnd = (ulong)player.frame == player.frameCount - 1;
-            if (reachedEnd && loopClip)
-                player.frame = 0;
+            bool reachedEnd = (ulong)videoPlayer.frame == videoPlayer.frameCount - 1;
+            if (reachedEnd && videoPlayer.isLooping)
+                videoPlayer.frame = 0;
 
-            player.StepForward();
-            InputTexture = player.texture ? player.texture : ResultTexture;
+            videoPlayer.StepForward();
+            InputTexture = videoPlayer.texture ? videoPlayer.texture : ResultTexture;
             return base.GetTexture();
         }
     }

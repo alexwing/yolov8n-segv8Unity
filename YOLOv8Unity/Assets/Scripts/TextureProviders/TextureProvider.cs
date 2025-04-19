@@ -14,9 +14,20 @@ namespace Assets.Scripts.TextureProviders
         protected Texture2D ResultTexture;
         protected Texture InputTexture;
 
+        public Vector2Int size;
+        public Texture2D outputTexture;
+
+        public TextureProvider() { }
+
         public TextureProvider(int width, int height, TextureFormat format = TextureFormat.RGB24)
         {
             ResultTexture = new Texture2D(width, height, format, mipChain: false);
+        }
+
+        public TextureProvider(Vector2Int size)
+        {
+            this.size = size;
+            outputTexture = new Texture2D(size.x, size.y);
         }
 
         ~TextureProvider()
@@ -32,6 +43,9 @@ namespace Assets.Scripts.TextureProviders
         {
             return TextureTools.ResizeAndCropToCenter(InputTexture, ref ResultTexture, ResultTexture.width, ResultTexture.height);
         }
+
+        // Método para obtener la textura raw sin procesar para visualización independiente
+        public abstract Texture GetRawTexture();
 
         public abstract TextureProviderType.ProviderType TypeEnum();
     }
