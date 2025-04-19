@@ -10,6 +10,8 @@ namespace Assets.Scripts
         private bool scaleInitialized = false;
         private FrameRateController cameraFpsController;
         private FrameRateController yoloFpsController;
+        // Textura reutilizable para el modo transparente
+        private Texture2D transparentTexture;
 
         // Use this for initialization
         void OnEnable()
@@ -87,32 +89,35 @@ namespace Assets.Scripts
             int w = sourceTexture.width;
             int h = sourceTexture.height;
             
-            // Crear una nueva textura con formato RGBA32 para permitir transparencia
-            Texture2D transparentTexture = new Texture2D(w, h, TextureFormat.RGBA32, false);
-            Color[] pixels = new Color[w * h];
-            
-            // Inicializar todos los píxeles como transparentes
-            for (int i = 0; i < pixels.Length; i++)
+            // Reutilizar la textura si ya existe y tiene el tamaño correcto
+            if (transparentTexture == null || transparentTexture.width != w || transparentTexture.height != h)
             {
-                pixels[i] = Color.clear;
+                // Liberar la textura anterior si existe
+                if (transparentTexture != null)
+                    Destroy(transparentTexture);
+                    
+                transparentTexture = new Texture2D(w, h, TextureFormat.RGBA32, false);
             }
             
-            // Aplicar los píxeles iniciales
-            transparentTexture.SetPixels(pixels);
+            // Limpiar la textura directamente sin crear un nuevo array
+            transparentTexture.SetPixels(new Color[w * h]); // Más eficiente que iterar pixel por pixel
             
             // Dibujar las siluetas y los recuadros en la textura transparente
             foreach (ResultBoxWithMask box in results)
             {
                 // Dibujar la silueta
                 Color boxColor = colorArray[box.bestClassIndex % colorArray.Length];
-                TextureTools.RenderMaskOnTransparentTexture(box.masks, transparentTexture, sourceTexture, boxColor);
                 
-                // Dibujar el recuadro
-                int boxWidth = (int)(box.score / MinBoxConfidence);
-                TextureTools.DrawRectOutline(transparentTexture, box.rect, boxColor, boxWidth, rectIsNormalized: false, revertY: true);
-                
-                // Liberar el tensor de la máscara
-                box.masks.tensorOnDevice.Dispose();
+                // Usar bloque using para garantizar la liberación del tensor
+                using (box.masks.tensorOnDevice)
+                {
+                    TextureTools.RenderMaskOnTransparentTexture(box.masks, transparentTexture, sourceTexture, boxColor);
+                    
+                    // Dibujar el recuadro
+                    int boxWidth = (int)(box.score / MinBoxConfidence);
+                    TextureTools.DrawRectOutline(transparentTexture, box.rect, boxColor, boxWidth, rectIsNormalized: false, revertY: true);
+                }
+                // No es necesario llamar a Dispose manualmente al usar using
             }
             
             transparentTexture.Apply();
@@ -123,6 +128,13 @@ namespace Assets.Scripts
         {
             nn.Dispose();
             textureProvider.Stop();
+            
+            // Liberar la textura transparente al deshabilitar
+            if (transparentTexture != null)
+            {
+                Destroy(transparentTexture);
+                transparentTexture = null;
+            }
         }
 
         protected override void DrawBox(ResultBox box, Texture2D img)

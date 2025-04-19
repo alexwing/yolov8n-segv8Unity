@@ -479,7 +479,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb04ba54041edd24dae5d6eee63287b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ModelFile: {fileID: 5022602860645237092, guid: 067a47137293839408f5ec4c0cf7d228, type: 3}
+  ModelFile: {fileID: 5022602860645237092, guid: e02749757fc78a741bf84692a615c8d7, type: 3}
   ImageUI: {fileID: 1780323367}
   CameraImageUI: {fileID: 1464134750}
   MinBoxConfidence: 0.3
@@ -487,7 +487,7 @@ MonoBehaviour:
   textureProviderType: 0
   textureProvider:
     rid: 123652600781340672
-  cameraFrameRate: 2
+  cameraFrameRate: 24
   yoloFrameRate: 2
   references:
     version: 2
