@@ -79,6 +79,16 @@ namespace Assets.Scripts
                 float scale = Mathf.Min(scaleX, scaleY);
                 rt.localScale = new Vector3(scale, scale, 1f);
 
+                //inicializar CameraImageUI
+                RectTransform rtCamera = CameraImageUI.GetComponent<RectTransform>();
+                imageWidth = rtCamera.rect.width;
+                imageHeight = rtCamera.rect.height;
+                scaleX = screenWidth / imageWidth;
+                scaleY = screenHeight / imageHeight;
+                rtCamera.localScale = new Vector3(scaleX, scaleY, 1f);
+
+            
+
                 Debug.Log($"ImageUI position: {rt.anchoredPosition}, scale: {scale}");
                 scaleInitialized = true;
             }
