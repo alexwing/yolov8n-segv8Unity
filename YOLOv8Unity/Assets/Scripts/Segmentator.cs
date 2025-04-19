@@ -8,6 +8,8 @@ namespace Assets.Scripts
     {
         YOLOv8Segmentation yolo;
         private bool scaleInitialized = false;
+        private FrameRateController cameraFpsController;
+        private FrameRateController yoloFpsController;
 
         // Use this for initialization
         void OnEnable()
@@ -19,34 +21,49 @@ namespace Assets.Scripts
             textureProvider.Start();
             // Redimensionar RawImage al tamaño del modelo
             ImageUI.rectTransform.sizeDelta = new Vector2(YOLOv8OutputReader.InputWidth, YOLOv8OutputReader.InputHeight);
+            
+            // Inicializar controladores de frame rate
+            cameraFpsController = new FrameRateController(cameraFrameRate);
+            yoloFpsController = new FrameRateController(yoloFrameRate);
         }
 
         // Update is called once per frame
         void Update()
         {
-            // Mostrar la cámara en CameraImageUI a máxima velocidad
-            if (CameraImageUI != null)
+            // Actualizar los controladores de frame rate si se cambiaron los valores en el inspector
+            if (cameraFpsController != null && cameraFrameRate != cameraFpsController.TargetFrameRate)
+                cameraFpsController.SetFrameRate(cameraFrameRate);
+                
+            if (yoloFpsController != null && yoloFrameRate != yoloFpsController.TargetFrameRate)
+                yoloFpsController.SetFrameRate(yoloFrameRate);
+                
+            // Actualizar CameraImageUI según el frame rate configurado
+            if (CameraImageUI != null && cameraFpsController != null && cameraFpsController.ShouldUpdate())
             {
                 CameraImageUI.texture = textureProvider.GetRawTexture();
             }
 
-            YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
-            Texture2D texture = GetNextTexture();
+            // Actualizar ImageUI según el frame rate configurado
+            if (yoloFpsController != null && yoloFpsController.ShouldUpdate())
+            {
+                YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
+                Texture2D texture = GetNextTexture();
 
-            var boxes = yolo.Run(texture);
-            
-            if (UseTransparentBackground)
-            {
-                // Crear una textura transparente con solo la silueta y el recuadro
-                texture = CreateTransparentMaskTexture(boxes, texture);
+                var boxes = yolo.Run(texture);
+                
+                if (UseTransparentBackground)
+                {
+                    // Crear una textura transparente con solo la silueta y el recuadro
+                    texture = CreateTransparentMaskTexture(boxes, texture);
+                }
+                else
+                {
+                    // Modo normal, dibujar sobre la textura original
+                    DrawResults(boxes, texture);
+                }
+                
+                ImageUI.texture = texture;
             }
-            else
-            {
-                // Modo normal, dibujar sobre la textura original
-                DrawResults(boxes, texture);
-            }
-            
-            ImageUI.texture = texture;
 
             if (!scaleInitialized)
             {

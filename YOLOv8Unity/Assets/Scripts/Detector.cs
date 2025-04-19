@@ -19,12 +19,10 @@ public class Detector : MonoBehaviour
     [SerializeField]
     protected RawImage ImageUI;
 
-
     [Tooltip("RawImage component to render camera texture.")]
     [SerializeField]
     protected RawImage CameraImageUI;
     
-
     [Range(0.0f, 1f)]
     [Tooltip("The minimum value of box confidence below which boxes won't be drawn.")]
     [SerializeField]
@@ -40,10 +38,24 @@ public class Detector : MonoBehaviour
     [SerializeReference]
     protected TextureProvider textureProvider = null;
 
+    [Tooltip("Frame rate objetivo para CameraImageUI (0 = sin límite)")]
+    [Range(0, 120)]
+    [SerializeField]
+    protected int cameraFrameRate = 30;
+
+    [Tooltip("Frame rate objetivo para ImageUI con procesamiento YOLO (0 = sin límite)")]
+    [Range(0, 120)]
+    [SerializeField]
+    protected int yoloFrameRate = 15;
+
     protected NNHandler nn;
     protected Color[] colorArray = new Color[] { Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow };
 
-    YOLOv8 yolo;
+    // Controladores de frame rate
+    protected FrameRateController cameraFpsController;
+    protected FrameRateController yoloFpsController;
+
+    protected YOLOv8 yolo;
 
     private void OnEnable()
     {
@@ -52,23 +64,39 @@ public class Detector : MonoBehaviour
 
         textureProvider = GetTextureProvider(nn.model);
         textureProvider.Start();
+        
+        // Inicializar controladores de frame rate
+        cameraFpsController = new FrameRateController(cameraFrameRate);
+        yoloFpsController = new FrameRateController(yoloFrameRate);
     }
 
+    // Update is called once per frame
     private void Update()
     {
-        // Mostrar la cámara en CameraImageUI a máxima velocidad, independiente del procesamiento YOLO
-        if (CameraImageUI != null)
+        // Actualizar los controladores de frame rate si se cambiaron los valores en el inspector
+        if (cameraFpsController != null && cameraFrameRate != cameraFpsController.TargetFrameRate)
+            cameraFpsController.SetFrameRate(cameraFrameRate);
+            
+        if (yoloFpsController != null && yoloFrameRate != yoloFpsController.TargetFrameRate)
+            yoloFpsController.SetFrameRate(yoloFrameRate);
+            
+        // Actualizar CameraImageUI según el frame rate configurado
+        if (CameraImageUI != null && cameraFpsController != null && cameraFpsController.ShouldUpdate())
         {
             CameraImageUI.texture = textureProvider.GetRawTexture();
         }
 
-        // Procesamiento YOLO y visualización de resultados
-        YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
-        Texture2D texture = GetNextTexture();
+        // Actualizar ImageUI según el frame rate configurado
+        if (yoloFpsController != null && yoloFpsController.ShouldUpdate())
+        {
+            // Procesamiento YOLO y visualización de resultados
+            YOLOv8OutputReader.DiscardThreshold = MinBoxConfidence;
+            Texture2D texture = GetNextTexture();
 
-        var boxes = yolo.Run(texture);
-        DrawResults(boxes, texture);
-        ImageUI.texture = texture;
+            var boxes = yolo.Run(texture);
+            DrawResults(boxes, texture);
+            ImageUI.texture = texture;
+        }
     }
 
     protected TextureProvider GetTextureProvider(Model model)

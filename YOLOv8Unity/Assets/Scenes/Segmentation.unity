@@ -487,6 +487,8 @@ MonoBehaviour:
   textureProviderType: 0
   textureProvider:
     rid: 123652600781340672
+  cameraFrameRate: 2
+  yoloFrameRate: 2
   references:
     version: 2
     RefIds:
