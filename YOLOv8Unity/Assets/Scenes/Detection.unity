@@ -404,19 +404,108 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 339c4b6bb28288140952235c57b0905b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ModelFile: {fileID: 5022602860645237092, guid: e9ecb803cf8dd764fac799be2017fd1b, type: 3}
+  ModelFile: {fileID: 5022602860645237092, guid: c49a0cb3c052ef7418e277b57a524cde, type: 3}
   ImageUI: {fileID: 1780323367}
+  CameraImageUI: {fileID: 0}
   MinBoxConfidence: 0.223
+  UseTransparentBackground: 0
   textureProviderType: 0
   textureProvider:
     rid: 1110488524758188042
+  cameraFrameRate: 30
+  yoloFrameRate: 15
+  classNames:
+  - person
+  - bicycle
+  - car
+  - motorcycle
+  - airplane
+  - bus
+  - train
+  - truck
+  - boat
+  - traffic light
+  - fire hydrant
+  - stop sign
+  - parking meter
+  - bench
+  - bird
+  - cat
+  - dog
+  - horse
+  - sheep
+  - cow
+  - elephant
+  - bear
+  - zebra
+  - giraffe
+  - backpack
+  - umbrella
+  - handbag
+  - tie
+  - suitcase
+  - frisbee
+  - skis
+  - snowboard
+  - sports ball
+  - kite
+  - baseball bat
+  - baseball glove
+  - skateboard
+  - surfboard
+  - tennis racket
+  - bottle
+  - wine glass
+  - cup
+  - fork
+  - knife
+  - spoon
+  - bowl
+  - banana
+  - apple
+  - sandwich
+  - orange
+  - broccoli
+  - carrot
+  - hot dog
+  - pizza
+  - donut
+  - cake
+  - chair
+  - couch
+  - potted plant
+  - bed
+  - dining table
+  - toilet
+  - tv
+  - laptop
+  - mouse
+  - remote
+  - keyboard
+  - cell phone
+  - microwave
+  - oven
+  - toaster
+  - sink
+  - refrigerator
+  - book
+  - clock
+  - vase
+  - scissors
+  - teddy bear
+  - hair drier
+  - toothbrush
   references:
     version: 2
     RefIds:
     - rid: 1110488524758188042
       type: {class: WebCamTextureProvider, ns: Assets.Scripts.TextureProviders, asm: Scripts}
       data:
+        size: {x: 0, y: 0}
+        outputTexture: {fileID: 0}
         cameraName: 
+        DeviceName: 
+        TargetFPS: 0
 --- !u!81 &1438580887
 AudioListener:
   m_ObjectHideFlags: 0
