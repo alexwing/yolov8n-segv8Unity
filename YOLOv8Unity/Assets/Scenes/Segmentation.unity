@@ -479,7 +479,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb04ba54041edd24dae5d6eee63287b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ModelFile: {fileID: 5022602860645237092, guid: 2052180216ac3ec4eb7785bf0b1bd65d, type: 3}
+  ModelFile: {fileID: 5022602860645237092, guid: e02749757fc78a741bf84692a615c8d7, type: 3}
   ImageUI: {fileID: 1780323367}
   CameraImageUI: {fileID: 1464134750}
   MinBoxConfidence: 0.3
